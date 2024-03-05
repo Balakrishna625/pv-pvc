@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  UI_THEME: "light"
+  DEFAULT_LANGUAGE: "en"
+  SUPPORTED_CURRENCIES: "USD,EUR,INR"

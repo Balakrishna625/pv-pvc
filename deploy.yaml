@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookapp-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bookapp
+  template:
+    metadata:
+      labels:
+        app: bookapp
+    spec:
+      containers:
+      - name: bookapp
+        image: nginx:alpine
+        ports:
+        - containerPort: 3000
+        env:
+          - name: MODE
+            value: "production"
+          - name: ENABLE_LOGGING
+            value: "true"
+          - name: UI_THEME
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: UI_THEME
+          - name: DEFAULT_LANGUAGE
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: DEFAULT_LANGUAGE
+          - name: SUPPORTED_CURRENCIES
+            valueFrom:
+              configMapKeyRef:
+                name: app-config
+                key: SUPPORTED_CURRENCIES
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: app-secret
+                key: DB_USER
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: app-secret
+                key: DB_PASSWORD
+        volumeMounts:
+        - name: book-data
+          mountPath: /app/data
+      volumes:
+      - name: book-data
+        persistentVolumeClaim:
+          claimName: book-data-pvc
